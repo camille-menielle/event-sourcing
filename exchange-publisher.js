@@ -20,8 +20,10 @@ ExchangePublisher.prototype.connect = function (callback) {
 		if (err) return callback(err);
 
 		self.amqp.connect().then(function (channel) {
-			self.channel = channel;
-			callback(null, channel);
+		    self.channel = channel;
+		    self.channel.assertExchange(self.exchange, self.exchangeType).then(function (exchangeAssertion) {
+			return callback(null, channel);;
+		    });
 		}, callback);
 	});
 };
