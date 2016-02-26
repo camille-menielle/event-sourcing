@@ -1,4 +1,5 @@
 var AMQP = require('./amqp.js');
+var ConsumingWarning = require('./error/warning');
 
 function Consumer(config) {
 	if (!this.domain) throw new Error('Missing domain property');
@@ -23,7 +24,13 @@ Consumer.prototype.handleMessage = function (msg) {
 	var self = this;
 
 	function onProcessed(err, results) {
-		if (err) return self.onConsumerError && self.onConsumerError(err, msg);
+		if (err) {
+			if (err instanceof ConsumingWarning) {
+				if (self.onConsumerWarning) self.onConsumerWarning(err, msg);
+			} else {
+				return self.onConsumerError && self.onConsumerError(err, msg);
+			}
+		}
 
 		self.channel.ack(msg);
 
