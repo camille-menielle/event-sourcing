@@ -17,6 +17,7 @@ Publisher.prototype.connect = function (callback) {
 
 		self.amqp.connect().then(function (channel) {
 			self.channel = channel;
+			self.channel.assertQueue(self.domain);
 			callback(null, channel);
 		}, callback);
 	});
