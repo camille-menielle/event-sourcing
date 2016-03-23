@@ -41,9 +41,9 @@ Publisher.prototype.assertReplyQueue = function () {
 	});
 };
 
-Publisher.prototype.emitEvent = function (event, callback) {
+Publisher.prototype.emitEvent = function (event, callback, queueName) {
 	event = new Buffer(JSON.stringify(event));
-	var queue = this.domain;
+	var queue = queueName ? queueName : this.domain;
 
 	if (!callback) return this.channel.sendToQueue(queue, event);
 
